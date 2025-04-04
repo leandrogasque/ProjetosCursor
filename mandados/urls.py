@@ -9,5 +9,5 @@ urlpatterns = [
     path('<int:pk>/', views.visualizar_mandado, name='visualizar'),
     path('<int:pk>/editar/', views.editar_mandado, name='editar'),
     path('<int:pk>/excluir/', views.excluir_mandado, name='excluir'),
-    path('reconhecimento/', views.carrossel_fotos, name='carrossel'),
+    path('carrossel/', views.carrossel_fotos, name='carrossel'),
 ] 

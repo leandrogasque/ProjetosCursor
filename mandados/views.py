@@ -4,8 +4,35 @@ from django.contrib import messages
 from django.utils import timezone
 from .models import Mandado, Foto
 from .utils import extract_mandado_data
+from django.views.decorators.csrf import csrf_protect
 
 # Create your views here.
+
+@login_required
+def index(request):
+    """Página inicial da aplicação."""
+    return render(request, 'mandados/index.html')
+
+@login_required
+def dashboard(request):
+    """Dashboard com estatísticas."""
+    # Obter contagem de mandados por status
+    ativos = Mandado.objects.filter(status='ativo').count()
+    cumpridos = Mandado.objects.filter(status='cumprido').count()
+    cancelados = Mandado.objects.filter(status='cancelado').count()
+    
+    # Obter contagem total
+    total = ativos + cumpridos + cancelados
+    
+    # Contexto para o template
+    context = {
+        'ativos': ativos,
+        'cumpridos': cumpridos,
+        'cancelados': cancelados,
+        'total': total
+    }
+    
+    return render(request, 'mandados/dashboard.html', context)
 
 @login_required
 def listar_mandados(request):
@@ -13,6 +40,7 @@ def listar_mandados(request):
     return render(request, 'mandados/listar.html', {'mandados': mandados})
 
 @login_required
+@csrf_protect
 def novo_mandado(request):
     if request.method == 'POST':
         try:
@@ -85,6 +113,7 @@ def visualizar_mandado(request, pk):
     return render(request, 'mandados/visualizar.html', {'mandado': mandado})
 
 @login_required
+@csrf_protect
 def editar_mandado(request, pk):
     mandado = get_object_or_404(Mandado, pk=pk)
     if request.method == 'POST':
@@ -123,6 +152,7 @@ def editar_mandado(request, pk):
     return render(request, 'mandados/form.html', {'mandado': mandado})
 
 @login_required
+@csrf_protect
 def excluir_mandado(request, pk):
     mandado = get_object_or_404(Mandado, pk=pk)
     if request.method == 'POST':

@@ -1,13 +1,13 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-load_dotenv(os.path.join(basedir, '.env'))
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent
 
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'chave-secreta-padrao'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'sqlite:///' + os.path.join(basedir, 'app.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
-    UPLOAD_FOLDER = os.path.join(basedir, 'app/static/uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size 
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv(os.path.join(BASE_DIR, '.env'))
+
+# Configurações que podem ser utilizadas pelo Django
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'media/uploads')
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size 
