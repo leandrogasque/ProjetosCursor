@@ -1,0 +1,136 @@
+{% extends 'mandados/base.html' %}
+
+{% block title %}Visualizar Mandado{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">
+            <i class="fas fa-eye me-2"></i>Mandado #{{ mandado.numero_processo }}
+        </h2>
+        <div class="btn-group">
+            <a href="{% url 'mandados:editar' mandado.pk %}" class="btn btn-warning">
+                <i class="fas fa-edit me-1"></i>Editar
+            </a>
+            <a href="{% url 'mandados:excluir' mandado.pk %}" class="btn btn-danger">
+                <i class="fas fa-trash me-1"></i>Excluir
+            </a>
+            <a href="{% url 'mandados:listar' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i>Voltar
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-user me-2"></i>Informações do Infrator</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="30%">Nome:</th>
+                                <td>{{ mandado.nome_infrator }}</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Nascimento:</th>
+                                <td>{{ mandado.data_nascimento|date:"d/m/Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th>CPF:</th>
+                                <td>{{ mandado.cpf }}</td>
+                            </tr>
+                            <tr>
+                                <th>RG:</th>
+                                <td>{{ mandado.rg|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Endereço:</th>
+                                <td>{{ mandado.endereco|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Cidade/Estado:</th>
+                                <td>{{ mandado.cidade|default:"-" }}/{{ mandado.estado|default:"-" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4 class="mb-0"><i class="fas fa-gavel me-2"></i>Informações do Mandado</h4>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="30%">Status:</th>
+                                <td>
+                                    <span class="badge {% if mandado.status == 'ativo' %}bg-success{% elif mandado.status == 'cumprido' %}bg-primary{% else %}bg-danger{% endif %}">
+                                        {{ mandado.get_status_display }}
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Crime:</th>
+                                <td>{{ mandado.crime }}</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Expedição:</th>
+                                <td>{{ mandado.data_expedicao|date:"d/m/Y" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Validade:</th>
+                                <td>{{ mandado.data_validade|date:"d/m/Y"|default:"-" }}</td>
+                            </tr>
+                            <tr>
+                                <th>Registrado por:</th>
+                                <td>{{ mandado.registrado_por }}</td>
+                            </tr>
+                            <tr>
+                                <th>Data de Registro:</th>
+                                <td>{{ mandado.data_registro|date:"d/m/Y H:i" }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if mandado.observacoes %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-comment me-2"></i>Observações</h4>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{{ mandado.observacoes|linebreaks }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if mandado.fotos.all %}
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-images me-2"></i>Fotos</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for foto in mandado.fotos.all %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="{{ foto.arquivo.url }}" class="card-img-top foto-preview" alt="{{ foto.descricao }}">
+                            <div class="card-body">
+                                <p class="card-text small text-muted mb-1">{{ foto.descricao }}</p>
+                                <small class="text-muted">Upload em: {{ foto.data_upload|date:"d/m/Y H:i" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Início{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Bem-vindo ao Sistema de Mandados de Prisão</h2>
+            <p class="lead">Gerencie seus mandados de prisão de forma eficiente e segura.</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-list"></i> Mandados Ativos
+                    </h5>
+                    <p class="card-text display-4">{{ mandados|length }}</p>
+                    <a href="{{ url_for('mandados.listar_mandados') }}" class="btn btn-primary">Ver Todos</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-plus"></i> Novo Mandado
+                    </h5>
+                    <p class="card-text">Cadastre um novo mandado de prisão no sistema.</p>
+                    <a href="{{ url_for('mandados.novo_mandado') }}" class="btn btn-success">Cadastrar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-bar"></i> Dashboard
+                    </h5>
+                    <p class="card-text">Visualize estatísticas e relatórios do sistema.</p>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-info">Ver Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Últimos Mandados Cadastrados</h5>
+                </div>
+                <div class="card-body">
+                    {% if mandados %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Nº Processo</th>
+                                    <th>Infrator</th>
+                                    <th>Crime</th>
+                                    <th>Data Emissão</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for mandado in mandados %}
+                                <tr>
+                                    <td>{{ mandado.numero_processo }}</td>
+                                    <td>{{ mandado.nome_infrator }}</td>
+                                    <td>{{ mandado.crime }}</td>
+                                    <td>{{ mandado.data_expedicao.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="badge bg-{{ 'success' if mandado.status == 'ativo' else 'secondary' }}">
+                                            {{ mandado.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('mandados.visualizar_mandado', id=mandado.id) }}" 
+                                           class="btn btn-sm btn-info">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-center">Nenhum mandado cadastrado.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

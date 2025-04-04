@@ -1,0 +1,68 @@
+{% extends 'mandados/base.html' %}
+
+{% block title %}Listar Mandados{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">
+            <i class="fas fa-list me-2"></i>Mandados
+        </h2>
+        <a href="{% url 'mandados:novo' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Novo Mandado
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Número do Processo</th>
+                        <th>Nome do Infrator</th>
+                        <th>Crime</th>
+                        <th>Data de Expedição</th>
+                        <th>Status</th>
+                        <th>Fotos</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mandado in mandados %}
+                    <tr>
+                        <td>{{ mandado.numero_processo }}</td>
+                        <td>{{ mandado.nome_infrator }}</td>
+                        <td>{{ mandado.crime }}</td>
+                        <td>{{ mandado.data_expedicao|date:"d/m/Y" }}</td>
+                        <td>
+                            <span class="badge {% if mandado.status == 'ativo' %}bg-success{% elif mandado.status == 'cumprido' %}bg-primary{% else %}bg-danger{% endif %}">
+                                {{ mandado.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ mandado.fotos.count }} foto(s)</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="{% url 'mandados:visualizar' mandado.pk %}" class="btn btn-sm btn-info" title="Visualizar">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{% url 'mandados:editar' mandado.pk %}" class="btn btn-sm btn-warning" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{% url 'mandados:excluir' mandado.pk %}" class="btn btn-sm btn-danger" title="Excluir">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Nenhum mandado encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Visualizar Mandado{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Detalhes do Mandado de Prisão</h2>
+            <p class="lead">Informações completas do mandado</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('mandados.listar_mandados') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <a href="{{ url_for('mandados.editar_mandado', id=mandado.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Informações do Mandado</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Número do Processo:</label>
+                            <p>{{ mandado.numero_processo }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Status:</label>
+                            <p>
+                                <span class="badge bg-{{ 'success' if mandado.status == 'ativo' else 'secondary' }}">
+                                    {{ mandado.status }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Nome do Infrator:</label>
+                            <p>{{ mandado.nome_infrator }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Data de Nascimento:</label>
+                            <p>{{ mandado.data_nascimento.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">CPF:</label>
+                            <p>{{ mandado.cpf }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">RG:</label>
+                            <p>{{ mandado.rg or 'Não informado' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Endereço:</label>
+                            <p>{{ mandado.endereco }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Cidade:</label>
+                            <p>{{ mandado.cidade }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Estado:</label>
+                            <p>{{ mandado.estado }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Crime:</label>
+                            <p>{{ mandado.crime }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Data de Expedição:</label>
+                            <p>{{ mandado.data_expedicao.strftime('%d/%m/%Y') }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-bold">Data de Validade:</label>
+                            <p>{{ mandado.data_validade.strftime('%d/%m/%Y') if mandado.data_validade else 'Não definida' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="form-label fw-bold">Observações:</label>
+                            <p>{{ mandado.observacoes or 'Nenhuma observação registrada' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Fotografias</h5>
+                </div>
+                <div class="card-body">
+                    {% if mandado.fotos %}
+                    <div class="row">
+                        {% for foto in mandado.fotos %}
+                        <div class="col-12 mb-3">
+                            <img src="{{ url_for('static', filename='uploads/' + foto.filename) }}" 
+                                 class="img-fluid rounded" alt="Foto do infrator">
+                            {% if foto.descricao %}
+                            <p class="text-muted mt-2">{{ foto.descricao }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-center text-muted">Nenhuma foto cadastrada</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,62 @@
+{% extends 'mandados/base.html' %}
+
+{% block title %}Excluir Mandado{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="mb-0">
+            <i class="fas fa-trash-alt me-2"></i>
+            Excluir Mandado
+        </h2>
+    </div>
+    <div class="card-body">
+        <p class="lead">Tem certeza que deseja excluir o mandado do processo <strong>{{ mandado.numero_processo }}</strong>?</p>
+        
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            Esta ação não pode ser desfeita. Todas as fotos associadas também serão excluídas.
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">Detalhes do Mandado</h5>
+                <table class="table table-sm">
+                    <tr>
+                        <th style="width: 200px">Infrator:</th>
+                        <td>{{ mandado.nome_infrator }}</td>
+                    </tr>
+                    <tr>
+                        <th>Crime:</th>
+                        <td>{{ mandado.crime }}</td>
+                    </tr>
+                    <tr>
+                        <th>Data de Expedição:</th>
+                        <td>{{ mandado.data_expedicao|date:"d/m/Y" }}</td>
+                    </tr>
+                    <tr>
+                        <th>Status:</th>
+                        <td>
+                            <span class="badge {% if mandado.status == 'ativo' %}bg-success{% elif mandado.status == 'cumprido' %}bg-primary{% else %}bg-secondary{% endif %}">
+                                {{ mandado.get_status_display }}
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'mandados:visualizar' mandado.pk %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt me-1"></i>Confirmar Exclusão
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Mandados de Prisão{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Mandados de Prisão</h2>
+            <p class="lead">Lista de todos os mandados cadastrados no sistema</p>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('mandados.novo_mandado') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Novo Mandado
+            </a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nº Processo</th>
+                            <th>Infrator</th>
+                            <th>CPF</th>
+                            <th>Crime</th>
+                            <th>Data Expedição</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for mandado in mandados.items %}
+                        <tr>
+                            <td>{{ mandado.numero_processo }}</td>
+                            <td>{{ mandado.nome_infrator }}</td>
+                            <td>{{ mandado.cpf }}</td>
+                            <td>{{ mandado.crime }}</td>
+                            <td>{{ mandado.data_expedicao.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if mandado.status == 'ativo' else 'secondary' }}">
+                                    {{ mandado.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('mandados.visualizar_mandado', id=mandado.id) }}" 
+                                       class="btn btn-sm btn-info" title="Visualizar">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('mandados.editar_mandado', id=mandado.id) }}" 
+                                       class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if current_user.is_admin() %}
+                                    <button type="button" class="btn btn-sm btn-danger" title="Excluir"
+                                            onclick="confirmarExclusao({{ mandado.id }})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if mandados.pages > 1 %}
+            <nav aria-label="Navegação de páginas">
+                <ul class="pagination justify-content-center">
+                    {% for page in mandados.iter_pages() %}
+                        {% if page %}
+                            <li class="page-item {{ 'active' if page == mandados.page else '' }}">
+                                <a class="page-link" href="{{ url_for('mandados.listar_mandados', page=page) }}">
+                                    {{ page }}
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação de Exclusão -->
+<div class="modal fade" id="modalExclusao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este mandado de prisão?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form id="formExclusao" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+function confirmarExclusao(id) {
+    const modal = new bootstrap.Modal(document.getElementById('modalExclusao'));
+    const form = document.getElementById('formExclusao');
+    form.action = `/mandados/${id}/excluir`;
+    modal.show();
+}
+</script>
+{% endblock %}
+{% endblock %} 

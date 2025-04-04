@@ -1,0 +1,25 @@
+{% extends 'mandados/base.html' %}
+
+{% block title %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>Confirmar Exclusão</h2>
+    </div>
+    <div class="card-body">
+        <p class="alert alert-danger">
+            Tem certeza que deseja excluir o mandado #{{ mandado.numero_processo }} do infrator {{ mandado.nome_infrator }}?
+            Esta ação não pode ser desfeita.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-between">
+                <a href="{% url 'mandados:visualizar' mandado.pk %}" class="btn btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

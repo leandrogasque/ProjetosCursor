@@ -1,0 +1,156 @@
+{% extends 'mandados/base.html' %}
+
+{% block title %}{% if mandado %}Editar{% else %}Novo{% endif %} Mandado{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h2 class="mb-0">
+            <i class="fas {% if mandado %}fa-edit{% else %}fa-plus{% endif %} me-2"></i>
+            {% if mandado %}Editar{% else %}Novo{% endif %} Mandado
+        </h2>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="numero_processo" class="form-label">Número do Processo</label>
+                    <input type="text" class="form-control" id="numero_processo" name="numero_processo" value="{{ mandado.numero_processo|default:'' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" id="status" name="status" required>
+                        <option value="ativo" {% if mandado.status == 'ativo' %}selected{% endif %}>Ativo</option>
+                        <option value="cumprido" {% if mandado.status == 'cumprido' %}selected{% endif %}>Cumprido</option>
+                        <option value="cancelado" {% if mandado.status == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="nome_infrator" class="form-label">Nome do Infrator</label>
+                    <input type="text" class="form-control" id="nome_infrator" name="nome_infrator" value="{{ mandado.nome_infrator|default:'' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="data_nascimento" class="form-label">Data de Nascimento</label>
+                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ mandado.data_nascimento|date:'Y-m-d'|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="cpf" class="form-label">CPF</label>
+                    <input type="text" class="form-control" id="cpf" name="cpf" value="{{ mandado.cpf|default:'' }}" oninput="maskCPF(this)" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="rg" class="form-label">RG</label>
+                    <input type="text" class="form-control" id="rg" name="rg" value="{{ mandado.rg|default:'' }}">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <label for="endereco" class="form-label">Endereço</label>
+                    <input type="text" class="form-control" id="endereco" name="endereco" value="{{ mandado.endereco|default:'' }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="cidade" class="form-label">Cidade</label>
+                    <input type="text" class="form-control" id="cidade" name="cidade" value="{{ mandado.cidade|default:'' }}">
+                </div>
+                <div class="col-md-2">
+                    <label for="estado" class="form-label">Estado</label>
+                    <input type="text" class="form-control" id="estado" name="estado" value="{{ mandado.estado|default:'' }}" maxlength="2">
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="crime" class="form-label">Crime</label>
+                    <input type="text" class="form-control" id="crime" name="crime" value="{{ mandado.crime|default:'' }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="data_expedicao" class="form-label">Data de Expedição</label>
+                    <input type="date" class="form-control" id="data_expedicao" name="data_expedicao" value="{{ mandado.data_expedicao|date:'Y-m-d'|default:'' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="data_validade" class="form-label">Data de Validade</label>
+                    <input type="date" class="form-control" id="data_validade" name="data_validade" value="{{ mandado.data_validade|date:'Y-m-d'|default:'' }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="observacoes" class="form-label">Observações</label>
+                <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ mandado.observacoes|default:'' }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="fotos" class="form-label">Fotos</label>
+                <input type="file" class="form-control" id="fotos" name="fotos" multiple accept="image/*" onchange="previewImages()">
+                <div id="imagePreview" class="row mt-3"></div>
+            </div>
+
+            {% if mandado and mandado.fotos.all %}
+            <div class="mb-4">
+                <h5><i class="fas fa-images me-2"></i>Fotos Atuais</h5>
+                <div class="row">
+                    {% for foto in mandado.fotos.all %}
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <img src="{{ foto.arquivo.url }}" class="card-img-top foto-preview" alt="{{ foto.descricao }}">
+                            <div class="card-body">
+                                <p class="card-text small text-muted mb-1">{{ foto.descricao }}</p>
+                                <small class="text-muted">Upload em: {{ foto.data_upload|date:"d/m/Y H:i" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-between">
+                <a href="{% if mandado %}{% url 'mandados:visualizar' mandado.pk %}{% else %}{% url 'mandados:listar' %}{% endif %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i>Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if not mandado %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="mb-0">
+            <i class="fas fa-file-pdf me-2"></i>Importar de PDF
+        </h2>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="pdf_file" class="form-label">Arquivo PDF do Mandado</label>
+                <input type="file" class="form-control" id="pdf_file" name="pdf_file" accept=".pdf" required>
+                <div class="form-text">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Selecione um arquivo PDF contendo o mandado de prisão. O sistema tentará extrair automaticamente as informações.
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-file-import me-1"></i>Importar PDF
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endif %}
+{% endblock %} 

@@ -1,0 +1,53 @@
+{% extends 'mandados/base.html' %}
+
+{% block title %}Reconhecimento de Suspeitos{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2 class="mb-0">
+            <i class="fas fa-images me-2"></i>Reconhecimento de Suspeitos
+        </h2>
+    </div>
+    <div class="card-body">
+        {% if fotos %}
+        <div id="carouselFotos" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                {% for foto in fotos %}
+                <button type="button" data-bs-target="#carouselFotos" data-bs-slide-to="{{ forloop.counter0 }}" 
+                    {% if forloop.first %}class="active" aria-current="true"{% endif %} 
+                    aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+            <div class="carousel-inner">
+                {% for foto in fotos %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ foto.arquivo.url }}" class="d-block w-100" alt="{{ foto.descricao }}">
+                    <div class="carousel-caption">
+                        <h5>{{ foto.mandado.nome_infrator }}</h5>
+                        <p>
+                            Processo: {{ foto.mandado.numero_processo }}<br>
+                            Crime: {{ foto.mandado.crime }}<br>
+                            Data: {{ foto.mandado.data_expedicao|date:"d/m/Y" }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselFotos" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselFotos" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Próximo</span>
+            </button>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>Nenhuma foto disponível para reconhecimento.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
